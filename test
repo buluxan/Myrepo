@@ -59,14 +59,7 @@ container_commands:
         command: nrsysmond-config –set license_key=NewRelicLicenseKey
        "04":
         command: /etc/init.d/newrelic-sysmond start
+ 
 
-
-
-
-
--- 
-
-mall.ebizu.com -  dualstack.awseb-e-v-awsebloa-j0qf1zrbgm67-1342946587.ap-northeast-1.elb.amazonaws.com. 
-mallstaging    - mall-cms-staging.ap-northeast-1.elasticbeanstalk.com.
 
         
