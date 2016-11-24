@@ -1,0 +1,72 @@
+
+
+
+
+
+
+    packages:
+  yum:
+    perl-Switch: []
+    perl-DateTime: []
+    perl-Sys-Syslog: []
+    perl-LWP-Protocol-https: []
+
+container_commands:
+  00download:
+    command: "wget http://ec2-downloads.s3.amazonaws.com/cloudwatch-samples/CloudWatchMonitoringScripts-v1.1.0.zip"
+    ignoreErrors: true
+  01extract:
+    command: "unzip CloudWatchMonitoringScripts-v1.1.0.zip"
+    ignoreErrors: true
+  02rmzip:
+    command: "rm CloudWatchMonitoringScripts-v1.1.0.zip"
+    ignoreErrors: true
+  03cdinto:
+    command: "mv aws-scripts-mon/ /home/ec2-user"
+    ignoreErrors: true
+  04delete_existing_cron:
+    command: "crontab -r"
+    ignoreErrors: true
+  05cron_memory_cloudwatch:
+    command: "crontab -l | { cat; echo '* * * * * /home/ec2-user/aws-scripts-mon/mon-put-instance-data.pl --mem-util --mem-used --mem-avail'; } | crontab -"
+    ignoreErrors: false
+  06cron_clean_memory_cache:
+    command: "crontab -l | { cat; echo '0 */3 * * * root echo 3 > /proc/sys/vm/drop_caches'; } | crontab -"
+    ignoreErrors: false
+
+
+
+
+  based on checking from elasticbeanstalk event , i saw this instance (1-4adbcdd5) health check was failure   ,  
+  its was because the memory full , i have checked also on cloudwatch metric linux system monitoring pls see the image                         
+  here's that i got from cloudwath metric we are using separate script for monitoring this memory available only around 2 MB on that servers
+
+   packages:
+      yum:
+        newrelic-php5: []
+        newrelic-sysmond: []
+      rpm:
+        newrelic: http://yum.newrelic.com/pub/newrelic/el5/x86_64/newrelic-repo-5-3.noarch.rpm
+      commands:
+       "01":
+          command: newrelic-install install
+       env:
+        NR_INSTALL_SILENT: true
+        NR_INSTALL_KEY: NewRelicLicenseKey
+       "02":
+        command: echo newrelic.appname=$APP_ENV >> /etc/php.ini
+       "03":
+        command: nrsysmond-config –set license_key=NewRelicLicenseKey
+       "04":
+        command: /etc/init.d/newrelic-sysmond start
+
+
+
+
+
+-- 
+
+mall.ebizu.com -  dualstack.awseb-e-v-awsebloa-j0qf1zrbgm67-1342946587.ap-northeast-1.elb.amazonaws.com. 
+mallstaging    - mall-cms-staging.ap-northeast-1.elasticbeanstalk.com.
+
+        
